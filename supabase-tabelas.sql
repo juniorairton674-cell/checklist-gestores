@@ -32,7 +32,9 @@ create policy "ler checklist"       on public.checklist_gestores for select usin
 create policy "criar checklist"     on public.checklist_gestores for insert with check (true);
 create policy "atualizar checklist" on public.checklist_gestores for update using (true) with check (true);
 
-insert into public.checklist_lojas (nome) values ('POCINHOS') on conflict do nothing;
+insert into public.checklist_lojas (nome) values
+  ('Loja Duque de Caxias'), ('Loja Messejana'), ('Loja Montese'), ('Loja Sul')
+on conflict do nothing;
 
 -- Atualização automática na tela de todos (tempo real)
 alter publication supabase_realtime add table public.checklist_gestores;
