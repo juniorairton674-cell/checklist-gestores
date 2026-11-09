@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#5B2E1A">
+<meta name="theme-color" content="#3C2415">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -11,31 +11,23 @@
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<title>Check List Gestores de Loja</title>
+<title>Check List dos Gestores · Casa do Chocolate</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Outfit:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: barra fixa (loja · semana) → abas Execução / Painel. Execução = setores + dia + cartões de item com SIM/NÃO grandes; Painel = mapa de calor setor×dia, pendências e ranking das lojas. */
 :root{
-  --bg:#F6F5F3; --surface:#FFFFFF; --surface-2:#EFEBE7; --line:#E2DCD6; --ink:#24170F; --ink-soft:#6E625A;
-  --cacau:#5B2E1A; --cacau-ink:#FFFFFF; --cacau-soft:#F1E4DC;
-  --sim:#1F7A4D; --sim-bg:#DFF2E7; --nao:#C2352B; --nao-bg:#FBE3E0; --warn:#B26B00; --warn-bg:#FCEFD6;
-  --heat0:#E9E4DF; --band:#5B2E1A; --band-ink:#FFFFFF;
-  --display:'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
-  --body:'Public Sans', 'Segoe UI', system-ui, sans-serif;
-  --r:12px; --shadow:0 1px 2px rgba(36,23,15,.06),0 8px 22px -14px rgba(36,23,15,.35);
+  /* identidade Casa do Chocolate: cacau + rosa + creme (tema claro único, igual ao checklist das lojas) */
+  --bg:#FFF8F0; --surface:#FFFFFF; --surface-2:#FBEEDF; --line:#E8D9C8; --ink:#3C2415; --ink-soft:#8A6F5C;
+  --cacau:#E85D8A; --cacau-ink:#FFFFFF; --cacau-soft:#FDE3EC;
+  --rosa:#E85D8A; --rosa-2:#F58FB0; --ouro:#C9A15A;
+  --sim:#3E9B5C; --sim-bg:#E2F3E7; --nao:#D14343; --nao-bg:#FBE4E2; --warn:#B9862E; --warn-bg:#FBF0D9;
+  --heat0:#F1E6DA; --band:#3C2415; --band-2:#5B3A24; --band-ink:#FFF8F0;
+  --display:'Baloo 2', 'Segoe UI', system-ui, sans-serif;
+  --body:'Outfit', 'Segoe UI', system-ui, sans-serif;
+  --r:16px; --shadow:0 2px 6px rgba(60,36,21,.08),0 10px 24px -14px rgba(60,36,21,.16);
+  color-scheme:light;
 }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#17110E; --surface:#211915; --surface-2:#2B211C; --line:#3A2E27; --ink:#F3ECE6; --ink-soft:#B3A69C;
-  --cacau:#E0A27E; --cacau-ink:#1A100B; --cacau-soft:#3A271D;
-  --sim:#5CCB92; --sim-bg:#173326; --nao:#F07A6F; --nao-bg:#3D1C19; --warn:#F0B354; --warn-bg:#3A2A12; --heat0:#2E2520; --band:#3A2116; --band-ink:#F3ECE6;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 24px -14px rgba(0,0,0,.7); color-scheme:dark; } }
-:root[data-theme="dark"]{
-  --bg:#17110E; --surface:#211915; --surface-2:#2B211C; --line:#3A2E27; --ink:#F3ECE6; --ink-soft:#B3A69C;
-  --cacau:#E0A27E; --cacau-ink:#1A100B; --cacau-soft:#3A271D;
-  --sim:#5CCB92; --sim-bg:#173326; --nao:#F07A6F; --nao-bg:#3D1C19; --warn:#F0B354; --warn-bg:#3A2A12; --heat0:#2E2520; --band:#3A2116; --band-ink:#F3ECE6;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 24px -14px rgba(0,0,0,.7); color-scheme:dark; }
-
 *{box-sizing:border-box}
 html,body{background:var(--bg)}
 body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
@@ -47,12 +39,14 @@ button{cursor:pointer}
 .wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 
 /* top band */
-.band{background:var(--band);color:var(--band-ink);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+.band{background:linear-gradient(135deg,var(--band),var(--band-2));color:var(--band-ink);overflow:hidden;position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
 @media (max-width:720px){.band{position:relative;top:0}}
+.band::after{content:"";position:absolute;right:-80px;top:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(232,93,138,.35),transparent 70%);pointer-events:none}
+.band .wrap{position:relative;z-index:1}
 .band .wrap{padding-block:12px 10px;display:flex;flex-direction:column;gap:10px}
 .brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.brand h1{font-family:var(--display);font-weight:800;font-size:1.25rem;letter-spacing:-.01em;margin:0;text-wrap:balance}
-.brand small{display:block;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;opacity:.75;font-weight:600}
+.brand h1{font-family:var(--display);font-weight:800;font-size:clamp(22px,4vw,30px);line-height:1.1;letter-spacing:-.01em;margin:0;text-wrap:balance}
+.brand small{display:block;font-family:var(--display);font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;color:var(--rosa-2);font-weight:700}
 .sync{font-size:.75rem;display:flex;align-items:center;gap:6px;opacity:.9;white-space:nowrap}
 .sync i{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.5}
 .sync[data-s="ok"] i{opacity:1;background:#7BE0A8}
@@ -71,7 +65,7 @@ button{cursor:pointer}
 .lojaRow button{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:9px;width:36px;flex:none;font-weight:700}
 .tabs{display:flex;gap:4px}
 .tabs button{background:transparent;border:0;color:inherit;opacity:.7;font-weight:700;padding:6px 12px 8px;border-bottom:3px solid transparent;font-size:.92rem}
-.tabs button[aria-selected="true"]{opacity:1;border-bottom-color:currentColor}
+.tabs button[aria-selected="true"]{opacity:1;border-bottom-color:var(--rosa-2);color:#fff}
 
 main .wrap{padding-block:16px 48px;display:flex;flex-direction:column;gap:16px}
 .banner{border-radius:10px;padding:10px 14px;font-size:.85rem;background:var(--warn-bg);color:var(--warn);font-weight:600}
@@ -79,6 +73,8 @@ main .wrap{padding-block:16px 48px;display:flex;flex-direction:column;gap:16px}
 .addLoja input{flex:1;min-width:160px;border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:var(--bg)}
 .btn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:9px 14px;font-weight:600;font-size:.88rem}
 .btn.pri{background:var(--cacau);border-color:var(--cacau);color:var(--cacau-ink)}
+.btn.pri:hover{background:#d94d7c;border-color:#d94d7c}
+.btn:hover{border-color:var(--rosa)}
 .btn:disabled{opacity:.5;cursor:default}
 
 /* sector chips */
@@ -94,8 +90,8 @@ main .wrap{padding-block:16px 48px;display:flex;flex-direction:column;gap:16px}
 
 /* days */
 .dias{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.dia{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 12px;font-weight:700;font-size:.82rem;display:flex;gap:6px;align-items:center}
-.dia[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.dia{border:1px solid var(--line);background:var(--surface);border-radius:999px;font-family:var(--display);padding:7px 12px;font-weight:700;font-size:.82rem;display:flex;gap:6px;align-items:center}
+.dia[aria-pressed="true"]{background:var(--rosa);color:#fff;border-color:var(--rosa)}
 .dia .dot{width:7px;height:7px;border-radius:50%;background:var(--line)}
 .dia .dot.full{background:var(--sim)} .dia .dot.part{background:var(--warn)} .dia .dot.bad{background:var(--nao)}
 .dia.hoje::after{content:"hoje";font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;opacity:.7}
@@ -103,7 +99,7 @@ main .wrap{padding-block:16px 48px;display:flex;flex-direction:column;gap:16px}
 .viewtog{font-size:.8rem}
 
 .sechead{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap}
-.sechead h2{font-family:var(--display);font-weight:800;font-size:1.35rem;margin:0;letter-spacing:-.01em}
+.sechead h2{font-family:var(--display);font-weight:800;font-size:1.5rem;color:var(--ink);margin:0;letter-spacing:-.01em}
 .sechead p{margin:2px 0 0;color:var(--ink-soft);font-size:.85rem}
 .quick{display:flex;gap:6px;flex-wrap:wrap}
 
@@ -183,13 +179,13 @@ table.g tr.grp td{background:var(--cacau-soft);color:var(--cacau);font-weight:80
 .hist svg{width:100%;height:auto;display:block}
 .empty{color:var(--ink-soft);font-size:.86rem;padding:6px 0}
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;font-size:.85rem;z-index:50;box-shadow:var(--shadow)}
-.gate{position:fixed;inset:0;z-index:60;background:var(--band);color:var(--band-ink);display:flex;align-items:center;justify-content:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.gate{position:fixed;inset:0;z-index:60;background:linear-gradient(135deg,var(--band),var(--band-2));color:var(--band-ink);display:flex;align-items:center;justify-content:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
 .gbox{width:100%;max-width:340px;display:flex;flex-direction:column;gap:10px}
-.gbox small{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;opacity:.75;font-weight:600}
+.gbox small{font-family:var(--display);font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;color:var(--rosa-2);font-weight:700}
 .gbox h2{font-family:var(--display);font-weight:800;font-size:1.8rem;margin:0 0 10px}
 .gbox label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;opacity:.8}
 .gbox input{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:12px;color:inherit;font-size:1.1rem}
-.gbox .btn.pri{background:var(--band-ink);color:var(--band);border-color:var(--band-ink);padding:12px}
+.gbox .btn.pri{background:var(--rosa);color:#fff;border-color:var(--rosa);padding:12px;font-size:1rem}
 .gerr{margin:0;color:#FFB4AB;font-weight:700;font-size:.85rem}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -199,7 +195,7 @@ table.g tr.grp td{background:var(--cacau-soft);color:var(--cacau);font-weight:80
 <header class="band">
   <div class="wrap">
     <div class="brand">
-      <div><small>Check list operacional semanal</small><h1>Gestores de Loja</h1></div>
+      <div><small>Casa do Chocolate</small><h1>Check List dos Gestores</h1></div>
       <div class="sync" id="sync" data-s="off"><i></i><span id="syncTx">Conectando…</span></div>
     </div>
     <div class="ctrls">
@@ -280,8 +276,8 @@ table.g tr.grp td{background:var(--cacau-soft);color:var(--cacau);font-weight:80
 <div class="toast" id="toast" hidden></div>
 <div class="gate" id="gate" hidden>
   <form class="gbox" id="gForm">
-    <small>Check list operacional semanal</small>
-    <h2>Gestores de Loja</h2>
+    <small>Casa do Chocolate</small>
+    <h2>Check List dos Gestores</h2>
     <label for="gSenha">Senha de acesso</label>
     <input id="gSenha" type="password" inputmode="numeric" autocomplete="current-password">
     <p class="gerr" id="gErr" hidden>Senha incorreta. Tente de novo.</p>
@@ -591,7 +587,7 @@ $('addLoja').addEventListener('submit',function(e){
 $('btnZap').onclick=function(){
   if(!S.loja)return;
   var m=metrics(S.doc),L=[];
-  L.push('*CHECK LIST OPERACIONAL – '+S.loja+'*');L.push('Semana: '+weekLabel(S.semana));if(S.doc.responsavel)L.push('Responsável: '+S.doc.responsavel);
+  L.push('*CASA DO CHOCOLATE – CHECK LIST DOS GESTORES*');L.push('*Loja: '+S.loja+'*');L.push('Semana: '+weekLabel(S.semana));if(S.doc.responsavel)L.push('Responsável: '+S.doc.responsavel);
   L.push('Conformidade: *'+(m.p==null?'—':m.p+'%')+'* '+(m.p!=null?(m.p>=95?'✅ Aprovada':'❌ Reprovada'):''));L.push('');
   SETORES.forEach(function(s){var x=metrics(S.doc,s.id);L.push('• '+s.nome+': '+(x.p==null?'sem respostas':x.p+'%'));});
   if(m.nc){L.push('');L.push('*Não conformidades*');var seen={};m.ncList.forEach(function(n){var key=n.setor.id+n.it.k;if(seen[key])return;seen[key]=1;L.push('– '+n.it.t+' ('+n.setor.nome+')'+(n.plano?'\n   Plano: '+n.plano:'\n   ⚠️ sem plano de ação'));});}
